@@ -2,12 +2,15 @@
 
 #include "files.hpp"
 #include "misc.hpp"
+#include "secureimpl.hpp"
 
 using namespace std::string_view_literals;
 
 void file_readline(bool trim, FILE *fp, const std::function<bool(std::string_view)> &fn) {
     size_t len = 1024;
-    char *buf = (char *) malloc(len);
+
+    SecureAllocator<char> allocator;
+    char *buf = allocator.allocate(len);
     char *start;
     ssize_t read;
     while ((read = getline(&buf, &len, fp)) >= 0) {
@@ -22,7 +25,7 @@ void file_readline(bool trim, FILE *fp, const std::function<bool(std::string_vie
         if (!fn(start))
             break;
     }
-    free(buf);
+    allocator.deallocate(buf, len);
 }
 
 void file_readline(bool trim, const char *file, const std::function<bool(std::string_view)> &fn) {
