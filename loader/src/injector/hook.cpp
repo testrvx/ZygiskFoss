@@ -153,6 +153,9 @@ DCL_HOOK_FUNC(int, unshare, int flags) {
             } else if (g_ctx->info_flags & PROCESS_ROOT_IS_MAGISK) {
                 revert_unmount_magisk();
             }
+
+            old_unshare(CLONE_NEWNS);
+            mount("rootfs", "/", NULL, (MS_SLAVE | MS_REC), NULL);
         }
 
         /* Zygisksu changed: No umount app_process */

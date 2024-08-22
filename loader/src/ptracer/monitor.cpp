@@ -571,7 +571,7 @@ static bool prepare_environment() {
 }
 
 void init_monitor() {
-    LOGI("Zygisk Next %s", ZKSU_VERSION);
+    LOGI("Zygisk Foss %s", ZKSU_VERSION);
     LOGI("init monitor started");
     if (!prepare_environment()) {
         exit(1);
