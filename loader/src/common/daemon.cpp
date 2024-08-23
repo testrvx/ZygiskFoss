@@ -1,5 +1,6 @@
 #include <linux/un.h>
 #include <sys/socket.h>
+#include <mimalloc-override.h>
 #include <unistd.h>
 
 #include "daemon.h"

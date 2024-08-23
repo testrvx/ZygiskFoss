@@ -1,5 +1,6 @@
 #include <android/dlext.h>
 #include <sys/mount.h>
+#include <mimalloc-override.h>
 #include <dlfcn.h>
 #include <regex.h>
 #include <bitset>

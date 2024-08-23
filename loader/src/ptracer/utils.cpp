@@ -1,6 +1,7 @@
 #include <vector>
 #include <sys/mman.h>
 #include <sys/sysmacros.h>
+#include <mimalloc-override.h>
 #include <array>
 #include <cinttypes>
 #include <sys/ptrace.h>

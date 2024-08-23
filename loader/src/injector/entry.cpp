@@ -2,6 +2,7 @@
 #include "logging.h"
 #include "zygisk.hpp"
 #include "module.hpp"
+#include <mimalloc-override.h>
 
 using namespace std;
 

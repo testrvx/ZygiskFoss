@@ -1,4 +1,5 @@
 #include <sys/system_properties.h>
+#include <mimalloc-override.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <map>

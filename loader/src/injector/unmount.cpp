@@ -1,5 +1,6 @@
 #include <mntent.h>
 #include <sys/mount.h>
+#include <mimalloc-override.h>
 
 #include "files.hpp"
 #include "logging.h"

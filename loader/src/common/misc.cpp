@@ -1,3 +1,5 @@
+#include <mimalloc-override.h>
+
 #include "misc.hpp"
 
 int new_daemon_thread(thread_entry entry, void *arg) {

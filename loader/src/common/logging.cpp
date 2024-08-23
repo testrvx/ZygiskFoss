@@ -1,4 +1,5 @@
 #include <android/log.h>
+#include <mimalloc-override.h>
 #include <unistd.h>
 
 #include "logging.h"

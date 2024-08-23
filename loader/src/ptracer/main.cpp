@@ -5,6 +5,7 @@
 #include <fcntl.h>
 #include <time.h>
 #include <sys/system_properties.h>
+#include <mimalloc-override.h>
 
 #include "main.hpp"
 #include "utils.hpp"

@@ -4,6 +4,7 @@
 #include <climits>
 #include <cstring>
 #include <android/dlext.h>
+#include <mimalloc-override.h>
 
 #include "dl.h"
 #include "logging.h"

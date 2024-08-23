@@ -1,5 +1,6 @@
 #include <cstddef>
 #include <sys/socket.h>
+#include <mimalloc-override.h>
 #include <unistd.h>
 
 #include "socket_utils.h"

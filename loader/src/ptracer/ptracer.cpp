@@ -13,6 +13,7 @@
 #include <dlfcn.h>
 #include <signal.h>
 #include <sys/system_properties.h>
+#include <mimalloc-override.h>
 #include <string>
 #include <cinttypes>
 
@@ -129,6 +130,7 @@ bool inject_on_main(int pid, const char *lib_path) {
             err.resize(dlerror_len + 1, 0);
             read_proc(pid, (uintptr_t) dlerror_str_addr, err.data(), dlerror_len);
             LOGE("dlerror info %s", err.c_str());
+            free(&err);
             return false;
         }
 
