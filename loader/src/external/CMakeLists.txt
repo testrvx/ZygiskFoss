@@ -23,4 +23,4 @@ target_include_directories(xdl PUBLIC _xDL/xdl/src/main/cpp/include)
 
 add_library(mimalloc STATIC mimalloc/src/static.c)
 target_include_directories(mimalloc PUBLIC mimalloc/include)
-target_compile_definitions(mimalloc PUBLIC MI_SECURE=1)
+target_compile_definitions(mimalloc PUBLIC MI_SECURE=4)
