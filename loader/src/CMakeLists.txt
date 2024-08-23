@@ -13,7 +13,7 @@ target_link_libraries(common cxx::cxx log mimalloc)
 aux_source_directory(injector INJECTOR_SRC_LIST)
 add_library(zygisk SHARED ${INJECTOR_SRC_LIST})
 target_include_directories(zygisk PRIVATE include)
-target_link_libraries(zygisk cxx::cxx log common lsplt_static xdl phmap mimalloc)
+target_link_libraries(zygisk cxx::cxx log common lsplt_static phmap mimalloc)
 
 aux_source_directory(ptracer PTRACER_SRC_LIST)
 add_executable(libzygisk_ptrace.so ${PTRACER_SRC_LIST})
