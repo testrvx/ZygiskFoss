@@ -1,5 +1,7 @@
 #!/system/bin/sh
 
+DEBUG=@DEBUG@
+
 MODDIR=${0%/*}
 if [ "$ZYGISK_ENABLED" ]; then
   exit 0
@@ -43,5 +45,13 @@ if [ -f $MODDIR/lib/libzygisk.so ];then
   chcon u:object_r:system_file:s0 $TMP_PATH/lib/libzygisk.so
 fi
 
-[ "$DEBUG" = true ] && export RUST_BACKTRACE=1
+export MIMALLOC_VERBOSE=0
+export MIMALLOC_SHOW_ERRORS=1
+export MIMALLOC_PURGE_DECOMMITS=1
+
+[ "$DEBUG" = true ] && export RUST_BACKTRACE=1 && export MIMALLOC_VERBOSE=1 && export MIMALLOC_SHOW_STATS=1
+
+
+export 
+
 ./bin/zygisk-ptrace64 monitor &
