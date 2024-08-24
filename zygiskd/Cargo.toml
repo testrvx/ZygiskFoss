@@ -22,6 +22,7 @@ num_enum = "0.5"
 passfd = "0.1"
 proc-maps = "0.3"
 rand = "0.8.5"
+mimalloc = { version = "0.1.43", features = ["secure"] }
 
 rustix = { version = "0.38", features = [ "fs", "process", "mount", "net", "thread" ] }
 tokio = { version = "1.28", features = ["full"] }
