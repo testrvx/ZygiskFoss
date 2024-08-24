@@ -5,6 +5,7 @@ use anyhow::{bail, Result};
 use log::{debug, error, info, trace, warn};
 use passfd::FdPassingExt;
 use rustix::fs::{fcntl_setfd, FdFlags};
+use std::fmt::format;
 use std::fs;
 use std::io::Error;
 use std::ops::Deref;
@@ -18,6 +19,7 @@ use std::path::PathBuf;
 use std::process::{exit, Command};
 use std::sync::{Arc, Mutex};
 use std::thread;
+use rand::Rng;
 
 struct Module {
     name: String,
@@ -32,6 +34,10 @@ struct Context {
 static TMP_PATH: LateInit<String> = LateInit::new();
 static CONTROLLER_SOCKET: LateInit<String> = LateInit::new();
 static PATH_CP_NAME: LateInit<String> = LateInit::new();
+static MEMFD_PATH: LateInit<String> = LateInit::new();
+
+const CHARSET: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ\
+                          abcdefghijklmnopqrstuvwxyz";
 
 pub fn main() -> Result<()> {
     info!("Welcome to Zygisk Foss ({}) !", constants::ZKSU_VERSION);
@@ -159,9 +165,27 @@ fn load_modules(arch: &str) -> Result<Vec<Module>> {
     Ok(modules)
 }
 
+fn generate_random_string(min_length: usize, max_length: usize) -> String {
+    let mut rng = rand::thread_rng();
+    let length: usize = rng.gen_range(min_length..=max_length);
+    (0..length)
+        .map(|_| {
+            let idx = rng.gen_range(0..CHARSET.len());
+            CHARSET[idx] as char
+        })
+        .collect()
+}
+
 fn create_library_fd(so_path: &PathBuf) -> Result<OwnedFd> {
     let opts = memfd::MemfdOptions::default().allow_sealing(true);
-    let memfd = opts.create("jit-cache")?;
+
+    if (!MEMFD_PATH.initiated()) {
+        let memfd_name = generate_random_string(5, 10);
+        let memfd_path = memfd_name;
+        MEMFD_PATH.init(memfd_path);
+    }
+
+    let memfd = opts.create(MEMFD_PATH.as_str())?;
     let file = fs::File::open(so_path)?;
     let mut reader = std::io::BufReader::new(file);
     let mut writer = memfd.as_file();
@@ -275,6 +299,10 @@ fn handle_daemon_action(
                 stream.write_string(&module.name)?;
                 stream.send_fd(module.lib_fd.as_raw_fd())?;
             }
+        }
+        DaemonSocketAction::GetMemFdPath => {
+            let memfd_path = format!("/{}", MEMFD_PATH.as_str());
+            stream.write_string(&memfd_path);
         }
         DaemonSocketAction::RequestCompanionSocket => {
             let index = stream.read_usize()?;

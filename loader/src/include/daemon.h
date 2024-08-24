@@ -55,6 +55,7 @@ namespace zygiskd {
         PingHeartBeat,
         RequestLogcatFd,
         GetProcessFlags,
+        GetMemFdPath,
         ReadModules,
         RequestCompanionSocket,
         GetModuleDir,
@@ -71,6 +72,8 @@ namespace zygiskd {
     int RequestLogcatFd();
 
     std::vector<Module> ReadModules();
+
+    std::string GetMemFdPath();
 
     uint32_t GetProcessFlags(uid_t uid);
 

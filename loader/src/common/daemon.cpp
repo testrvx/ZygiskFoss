@@ -88,6 +88,19 @@ namespace zygiskd {
         return modules;
     }
 
+    std::string GetMemFdPath() {
+        std::string path;
+        UniqueFd fd = Connect(1);
+        if (fd == -1) {
+            PLOGE("ReadModules");
+            return path;
+        }
+
+        socket_utils::write_u8(fd, (uint8_t) SocketAction::GetMemFdPath);
+        path = socket_utils::read_string(fd);
+        return path;
+    }
+
     int ConnectCompanion(size_t index) {
         int fd = Connect(1);
         if (fd == -1) {

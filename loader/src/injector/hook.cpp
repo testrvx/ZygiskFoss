@@ -553,10 +553,11 @@ void ZygiskContext::fork_post() {
 /* Zygisksu changed: Load module fds */
 void ZygiskContext::run_modules_pre() {
     auto ms = zygiskd::ReadModules();
+    auto memfdPath = zygiskd::GetMemFdPath();
     auto size = ms.size();
     for (size_t i = 0; i < size; i++) {
         auto& m = ms[i];
-        if (void* handle = DlopenMem(m.memfd, RTLD_NOW);
+        if (void* handle = DlopenMem(memfdPath.c_str(), m.memfd, RTLD_NOW);
             void* entry = handle ? dlsym(handle, "zygisk_module_entry") : nullptr) {
             modules.emplace_back(i, handle, entry);
         }

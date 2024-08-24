@@ -45,13 +45,13 @@ void* DlopenExt(const char* path, int flags) {
     return handle;
 }
 
-void* DlopenMem(int fd, int flags) {
+void* DlopenMem(const char *memfdPath, int fd, int flags) {
     auto info = android_dlextinfo{
         .flags = ANDROID_DLEXT_USE_LIBRARY_FD,
         .library_fd = fd
     };
 
-    auto* handle = android_dlopen_ext("/jit-cache", flags, &info);
+    auto* handle = android_dlopen_ext(memfdPath, flags, &info);
     if (handle) {
         LOGV("dlopen fd %d: %p", fd, handle);
     } else {
