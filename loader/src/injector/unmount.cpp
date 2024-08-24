@@ -14,7 +14,6 @@ namespace {
     constexpr auto KSU_OVERLAY_SOURCE = "KSU";
     constexpr auto APATCH_OVERLAY_SOURCE = "APatch";
     constexpr auto ZYGISK_FUSE_SOURCE = "zygisk";
-    const std::vector<std::string> KSU_PARTITIONS{"/system", "/vendor", "/product", "/system_ext", "/odm", "/oem"};
 
     void lazy_unmount(const char* mountpoint) {
         if (umount2(mountpoint, MNT_DETACH) != -1) {
@@ -31,7 +30,6 @@ void revert_unmount_ksu() {
     std::string ksu_loop;
     std::vector<std::string> targets;
 
-    // Unmount ksu module dir last
     targets.emplace_back(MODULE_DIR);
 
     for (auto& info: parse_mount_info("self")) {
@@ -43,16 +41,14 @@ void revert_unmount_ksu() {
         if (info.target.starts_with("/data/adb")) {
             targets.emplace_back(info.target);
         }
-        // Unmount ksu overlays
-        if (info.type == "overlay"
-            && info.source == KSU_OVERLAY_SOURCE
-            && std::find(KSU_PARTITIONS.begin(), KSU_PARTITIONS.end(), info.target) != KSU_PARTITIONS.end()) {
-            targets.emplace_back(info.target);
+
+        // unmount ksu overlays and temp dir
+        if (info.type == "overlay" || info.type == "tmpfs") {
+            if (info.source == KSU_OVERLAY_SOURCE) {
+                targets.emplace_back(info.target);
+            }
         }
-        // Unmount temp dir
-        if (info.type == "tmpfs" && info.source == KSU_OVERLAY_SOURCE) {
-            targets.emplace_back(info.target);
-        }
+        
        // Unmount /debug_ramdisk
         if (info.target.starts_with("/debug_ramdisk")) {
             targets.emplace_back(info.target);
@@ -96,12 +92,10 @@ void revert_unmount_magisk() {
     }
 }
 void revert_unmount_apatch() {
-      std::string apatch_loop;
+    std::string apatch_loop;
     std::vector<std::string> targets;
 
-    // Unmount apatch module dir last
     targets.emplace_back(MODULE_DIR);
-
 
     for (auto& info: parse_mount_info("self")) {
         if (info.target == MODULE_DIR) {
@@ -114,8 +108,7 @@ void revert_unmount_apatch() {
         }
         // Unmount APATCH overlays
         if (info.type == "overlay"
-            && info.source == APATCH_OVERLAY_SOURCE
-            && std::find(KSU_PARTITIONS.begin(), KSU_PARTITIONS.end(), info.target) != KSU_PARTITIONS.end()) {
+            && info.source == APATCH_OVERLAY_SOURCE) {
             targets.emplace_back(info.target);
         }
         // Unmount /debug_ramdisk
