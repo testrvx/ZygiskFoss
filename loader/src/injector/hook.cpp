@@ -153,7 +153,6 @@ DCL_HOOK_FUNC(int, unshare, int flags) {
             }
 
             old_unshare(CLONE_NEWNS);
-            mount("rootfs", "/", NULL, (MS_SLAVE | MS_REC), NULL);
         }
 
         /* Zygisksu changed: No umount app_process */
