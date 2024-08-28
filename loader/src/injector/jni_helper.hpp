@@ -5,6 +5,7 @@
 
 #include <string>
 #include <string_view>
+#include "string.hpp"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Winvalid-partial-specialization"

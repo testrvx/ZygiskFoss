@@ -3,6 +3,7 @@
 
 #include "files.hpp"
 #include "misc.hpp"
+#include "string.hpp"
 
 using namespace std::string_view_literals;
 
@@ -15,7 +16,7 @@ void file_readline(bool trim, FILE *fp, const std::function<bool(std::string_vie
     while ((read = getline(&buf, &len, fp)) >= 0) {
         start = buf;
         if (trim) {
-            while (read && "\n\r "sv.find(buf[read - 1]) != std::string::npos)
+            while (read && "\n\r "sv.find(buf[read - 1]) != sdstring::npos)
                 --read;
             buf[read] = '\0';
             while (*start == ' ')

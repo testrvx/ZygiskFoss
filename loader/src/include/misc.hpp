@@ -7,6 +7,7 @@
 #include <string_view>
 
 #include "logging.h"
+#include "string.hpp"
 
 #define DISALLOW_COPY_AND_MOVE(clazz) \
 clazz(const clazz &) = delete; \
@@ -87,9 +88,9 @@ struct StringCmp {
  */
 int parse_int(std::string_view s);
 
-std::list<std::string> split_str(std::string_view s, std::string_view delimiter);
+std::list<sdstring> split_str(std::string_view s, std::string_view delimiter);
 
-std::string join_str(const std::list<std::string>& list, std::string_view delimiter);
+sdstring join_str(const std::list<sdstring>& list, std::string_view delimiter);
 
 template <typename T>
 static inline T align_to(T v, int a) {

@@ -28,9 +28,11 @@
 #include <sched.h>
 #include <fcntl.h>
 
+#include "string.hpp"
+
 bool switch_mnt_ns(int pid, int *fd) {
     int nsfd, old_nsfd = -1;
-    std::string path;
+    sdstring path;
     if (pid == 0) {
         if (fd != nullptr) {
             nsfd = *fd;
@@ -47,7 +49,7 @@ bool switch_mnt_ns(int pid, int *fd) {
             }
             *fd = old_nsfd;
         }
-        path = std::string("/proc/") + std::to_string(pid) + "/ns/mnt";
+        path = sdstring("/proc/") + std::to_string(pid) + "/ns/mnt";
         nsfd = open(path.c_str(), O_RDONLY | O_CLOEXEC);
         if (nsfd == -1) {
             PLOGE("open nsfd %s", path.c_str());
@@ -65,11 +67,11 @@ bool switch_mnt_ns(int pid, int *fd) {
     return true;
 }
 
-std::vector<MapInfo> MapInfo::Scan(const std::string& pid) {
+std::vector<MapInfo> MapInfo::Scan(const sdstring& pid) {
     constexpr static auto kPermLength = 5;
     constexpr static auto kMapEntry = 7;
     std::vector<MapInfo> info;
-    std::string file_name = std::string("/proc/") + pid + "/maps";
+    sdstring file_name = sdstring("/proc/") + pid + "/maps";
     auto maps = std::unique_ptr<FILE, decltype(&fclose)>{fopen(file_name.c_str(), "r"), &fclose};
     if (maps) {
         char *line = nullptr;
@@ -178,10 +180,10 @@ bool set_regs(int pid, struct user_regs_struct &regs) {
     return true;
 }
 
-std::string get_addr_mem_region(std::vector<MapInfo> &info, uintptr_t addr) {
+sdstring get_addr_mem_region(std::vector<MapInfo> &info, uintptr_t addr) {
     for (auto &map: info) {
         if (map.start <= addr && map.end > addr) {
-            auto s = std::string(map.path);
+            auto s = sdstring(map.path);
             s += ' ';
             s += map.perms & PROT_READ ? 'r' : '-';
             s += map.perms & PROT_WRITE ? 'w' : '-';
@@ -402,7 +404,7 @@ void wait_for_trace(int pid, int* status, int flags) {
     }
 }
 
-std::string parse_status(int status) {
+sdstring parse_status(int status) {
     std::ostringstream os;
     os << "0x" << std::hex << status << std::dec << " ";
     if (WIFEXITED(status)) {
@@ -420,8 +422,8 @@ std::string parse_status(int status) {
     return os.str();
 }
 
-std::string get_program(int pid) {
-    std::string path = "/proc/";
+sdstring get_program(int pid) {
+    sdstring path = "/proc/";
     path += std::to_string(pid);
     path += "/exe";
     constexpr const auto SIZE = 256;

@@ -7,6 +7,8 @@
 #include "misc.hpp"
 #include "zygisk.hpp"
 
+#include "string.hpp"
+
 using namespace std::string_view_literals;
 
 namespace {
@@ -27,8 +29,8 @@ namespace {
 }
 
 void revert_unmount_ksu() {
-    std::string ksu_loop;
-    std::vector<std::string> targets;
+    sdstring ksu_loop;
+    std::vector<sdstring> targets;
 
     targets.emplace_back(MODULE_DIR);
 
@@ -72,7 +74,7 @@ void revert_unmount_ksu() {
 }
 
 void revert_unmount_magisk() {
-    std::vector<std::string> targets;
+    std::vector<sdstring> targets;
 
     // Unmount dummy skeletons and MAGISKTMP
     // since mirror nodes are always mounted under skeleton, we don't have to specifically unmount
@@ -92,8 +94,8 @@ void revert_unmount_magisk() {
     }
 }
 void revert_unmount_apatch() {
-    std::string apatch_loop;
-    std::vector<std::string> targets;
+    sdstring apatch_loop;
+    std::vector<sdstring> targets;
 
     targets.emplace_back(MODULE_DIR);
 

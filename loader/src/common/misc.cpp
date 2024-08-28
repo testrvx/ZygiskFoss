@@ -1,6 +1,7 @@
 #include <mimalloc-override.h>
 
 #include "misc.hpp"
+#include "string.hpp"
 
 int new_daemon_thread(thread_entry entry, void *arg) {
     pthread_t thread;
@@ -25,8 +26,8 @@ int parse_int(std::string_view s) {
     return val;
 }
 
-std::list<std::string> split_str(std::string_view s, std::string_view delimiter) {
-    std::list<std::string> ret;
+std::list<sdstring> split_str(std::string_view s, std::string_view delimiter) {
+    std::list<sdstring> ret;
     size_t pos = 0;
     while (pos < s.size()) {
         auto next = s.find(delimiter, pos);
@@ -40,8 +41,8 @@ std::list<std::string> split_str(std::string_view s, std::string_view delimiter)
     return ret;
 }
 
-std::string join_str(const std::list<std::string>& list, std::string_view delimiter) {
-    std::string ret;
+sdstring join_str(const std::list<sdstring>& list, std::string_view delimiter) {
+    sdstring ret;
     for (auto& s : list) {
         if (!ret.empty())
             ret += delimiter;

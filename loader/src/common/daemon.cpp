@@ -6,14 +6,15 @@
 #include "daemon.h"
 #include "dl.h"
 #include "socket_utils.h"
+#include "string.hpp"
 
 namespace zygiskd {
-    static std::string TMP_PATH;
+    static sdstring TMP_PATH;
     void Init(const char *path) {
         TMP_PATH = path;
     }
 
-    std::string GetTmpPath() {
+    sdstring GetTmpPath() {
         return TMP_PATH;
     }
 
@@ -81,15 +82,15 @@ namespace zygiskd {
         socket_utils::write_u8(fd, (uint8_t) SocketAction::ReadModules);
         size_t len = socket_utils::read_usize(fd);
         for (size_t i = 0; i < len; i++) {
-            std::string name = socket_utils::read_string(fd);
+            sdstring name = socket_utils::read_string(fd);
             int module_fd = socket_utils::recv_fd(fd);
             modules.emplace_back(name, module_fd);
         }
         return modules;
     }
 
-    std::string GetMemFdPath() {
-        std::string path;
+    sdstring GetMemFdPath() {
+        sdstring path;
         UniqueFd fd = Connect(1);
         if (fd == -1) {
             PLOGE("ReadModules");

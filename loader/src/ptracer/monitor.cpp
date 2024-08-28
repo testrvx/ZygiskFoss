@@ -21,6 +21,7 @@
 #include "utils.hpp"
 #include "files.hpp"
 #include "misc.hpp"
+#include "string.hpp"
 
 using namespace std::string_view_literals;
 
@@ -36,7 +37,7 @@ enum TracingState {
     EXITING
 };
 
-std::string monitor_stop_reason;
+sdstring monitor_stop_reason;
 
 constexpr char SOCKET_NAME[] = "init_monitor";
 
@@ -109,7 +110,7 @@ public:
 };
 
 static TracingState tracing_state = TRACING;
-static std::string prop_path;
+static sdstring prop_path;
 
 
 struct Status {
@@ -117,8 +118,8 @@ struct Status {
     bool zygote_injected = false;
     bool daemon_running = false;
     pid_t daemon_pid = -1;
-    std::string daemon_info;
-    std::string daemon_error_info;
+    sdstring daemon_info;
+    sdstring daemon_error_info;
 };
 
 static Status status64;
@@ -235,24 +236,24 @@ struct SocketHandler : public EventHandler {
                     break;
                 case DAEMON64_SET_INFO:
                     LOGD("received daemon64 info %s", msg.data);
-                    status64.daemon_info = std::string(msg.data);
+                    status64.daemon_info = sdstring(msg.data);
                     updateStatus();
                     break;
                 case DAEMON32_SET_INFO:
                     LOGD("received daemon32 info %s", msg.data);
-                    status32.daemon_info = std::string(msg.data);
+                    status32.daemon_info = sdstring(msg.data);
                     updateStatus();
                     break;
                 case DAEMON64_SET_ERROR_INFO:
                     LOGD("received daemon64 error info %s", msg.data);
                     status64.daemon_running = false;
-                    status64.daemon_error_info = std::string(msg.data);
+                    status64.daemon_error_info = sdstring(msg.data);
                     updateStatus();
                     break;
                 case DAEMON32_SET_ERROR_INFO:
                     LOGD("received daemon32 error info %s", msg.data);
                     status32.daemon_running = false;
-                    status32.daemon_error_info = std::string(msg.data);
+                    status32.daemon_error_info = sdstring(msg.data);
                     updateStatus();
                     break;
                 case SYSTEM_SERVER_STARTED:
@@ -303,7 +304,7 @@ static bool ensure_daemon_created(bool is_64bit) {
             PLOGE("create daemon (64=%s)", is_64bit ? "true" : "false");
             return false;
         } else if (pid == 0) {
-            std::string daemon_name = "./bin/zygiskd";
+            sdstring daemon_name = "./bin/zygiskd";
             daemon_name += is_64bit ? "64" : "32";
             execl(daemon_name.c_str(), daemon_name.c_str(), nullptr);
             PLOGE("exec daemon %s failed", daemon_name.c_str());
@@ -491,12 +492,12 @@ public:
     }
 };
 
-static std::string pre_section;
-static std::string post_section;
+static sdstring pre_section;
+static sdstring post_section;
 
 static void updateStatus() {
     auto prop = xopen_file(prop_path.c_str(), "w");
-    std::string status_text = "monitor:";
+    sdstring status_text = "monitor:";
     switch (tracing_state) {
         case TRACING:
             status_text += "😋tracing";

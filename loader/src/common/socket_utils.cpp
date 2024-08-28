@@ -103,7 +103,7 @@ namespace socket_utils {
         return write_exact<size_t>(fd, val);
     }
 
-    std::string read_string(int fd) {
+    sdstring read_string(int fd) {
         auto len = read_usize(fd);
         char buf[len + 1];
         buf[len] = '\0';

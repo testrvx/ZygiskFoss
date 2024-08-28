@@ -11,6 +11,7 @@
 #define LOG_TAG "zygisk-ptrace32"
 #endif
 #include "logging.h"
+#include "string.hpp"
 
 struct MapInfo {
     /// \brief The start address of the memory region.
@@ -33,12 +34,12 @@ struct MapInfo {
     /// \brief The inode number of the memory region.
     ino_t inode;
     /// \brief The path of the memory region.
-    std::string path;
+    sdstring path;
 
     /// \brief Scans /proc/self/maps and returns a list of \ref MapInfo entries.
     /// This is useful to find out the inode of the library to hook.
     /// \return A list of \ref MapInfo entries.
-    static std::vector<MapInfo> Scan(const std::string& pid = "self");
+    static std::vector<MapInfo> Scan(const sdstring& pid = "self");
 };
 
 #if defined(__x86_64__)
@@ -68,7 +69,7 @@ bool get_regs(int pid, struct user_regs_struct &regs);
 
 bool set_regs(int pid, struct user_regs_struct &regs);
 
-std::string get_addr_mem_region(std::vector<MapInfo> &info, uintptr_t addr);
+sdstring get_addr_mem_region(std::vector<MapInfo> &info, uintptr_t addr);
 
 void *find_module_base(std::vector<MapInfo> &info, std::string_view suffix);
 
@@ -89,7 +90,7 @@ int fork_dont_care();
 
 void wait_for_trace(int pid, int* status, int flags);
 
-std::string parse_status(int status);
+sdstring parse_status(int status);
 
 #define WPTEVENT(x) (x >> 16)
 
@@ -116,7 +117,7 @@ inline const char* sigabbrev_np(int sig) {
     return "(unknown)";
 }
 
-std::string get_program(int pid);
+sdstring get_program(int pid);
 void *find_module_return_addr(std::vector<MapInfo> &info, std::string_view suffix);
 
 // pid = 0, fd != nullptr -> set to fd

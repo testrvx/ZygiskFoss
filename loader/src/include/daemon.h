@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <vector>
 
+#include "string.hpp"
+
 #if defined(__LP64__)
 # define LP_SELECT(lp32, lp64) lp64
 #else
@@ -45,10 +47,10 @@ private:
 namespace zygiskd {
 
     struct Module {
-        std::string name;
+        sdstring name;
         UniqueFd memfd;
 
-        inline explicit Module(std::string name, int memfd) : name(name), memfd(memfd) {}
+        inline explicit Module(sdstring name, int memfd) : name(name), memfd(memfd) {}
     };
 
     enum class SocketAction {
@@ -65,7 +67,7 @@ namespace zygiskd {
 
     void Init(const char *path);
 
-    std::string GetTmpPath();
+    sdstring GetTmpPath();
 
     bool PingHeartbeat();
 
@@ -73,7 +75,7 @@ namespace zygiskd {
 
     std::vector<Module> ReadModules();
 
-    std::string GetMemFdPath();
+    sdstring GetMemFdPath();
 
     uint32_t GetProcessFlags(uid_t uid);
 

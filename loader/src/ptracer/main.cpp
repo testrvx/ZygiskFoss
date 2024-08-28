@@ -12,6 +12,8 @@
 #include "daemon.h"
 #include <sys/mount.h>
 
+#include "string.hpp"
+
 using namespace std::string_view_literals;
 
 int main(int argc, char **argv) {

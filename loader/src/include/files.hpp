@@ -3,22 +3,24 @@
 #include <string>
 #include <vector>
 #include <mimalloc-override.h>
+#include "string.hpp"
+
 
 struct mount_info {
     unsigned int id;
     unsigned int parent;
     dev_t device;
-    std::string root;
-    std::string target;
-    std::string vfs_option;
+    sdstring root;
+    sdstring target;
+    sdstring vfs_option;
     struct {
         unsigned int shared;
         unsigned int master;
         unsigned int propagate_from;
     } optional;
-    std::string type;
-    std::string source;
-    std::string fs_option;
+    sdstring type;
+    sdstring source;
+    sdstring fs_option;
 };
 
 void file_readline(bool trim, FILE *fp, const std::function<bool(std::string_view)> &fn);

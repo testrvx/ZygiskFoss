@@ -18,9 +18,10 @@
 #include <cinttypes>
 
 #include "utils.hpp"
+#include "string.hpp"
 
-bool inject_on_main(int pid, const char *lib_path) {
-    LOGI("injecting %s to zygote %d", lib_path, pid);
+bool inject_on_main(int pid, sdstring *lib_path) {
+    LOGI("injecting %s to zygote %d", lib_path->c_str(), pid);
     // parsing KernelArgumentBlock
     // https://cs.android.com/android/platform/superproject/main/+/main:bionic/libc/private/KernelArgumentBlock.h;l=30;drc=6d1ee77ee32220e4202c3066f7e1f69572967ad8
     struct user_regs_struct regs{}, backup{};
@@ -96,11 +97,12 @@ bool inject_on_main(int pid, const char *lib_path) {
         auto dlopen_addr = find_func_addr(local_map, map, "libdl.so", "dlopen");
         if (dlopen_addr == nullptr) return false;
         std::vector<long> args;
-        auto str = push_string(pid, regs, lib_path);
+        auto str = push_string(pid, regs, lib_path->c_str());
         args.clear();
         args.push_back((long) str);
         args.push_back((long) RTLD_NOW);
         auto remote_handle = remote_call(pid, regs, (uintptr_t) dlopen_addr, (uintptr_t) libc_return_addr, args);
+        lib_path->clear_on_stack(pid, regs);
         LOGD("remote handle %p", (void *) remote_handle);
         if (remote_handle == 0) {
             LOGE("handle is null");
@@ -126,7 +128,7 @@ bool inject_on_main(int pid, const char *lib_path) {
                 LOGE("dlerror len <= 0");
                 return false;
             }
-            std::string err;
+            sdstring err;
             err.resize(dlerror_len + 1, 0);
             read_proc(pid, (uintptr_t) dlerror_str_addr, err.data(), dlerror_len);
             LOGE("dlerror info %s", err.c_str());
@@ -138,10 +140,12 @@ bool inject_on_main(int pid, const char *lib_path) {
         auto dlsym_addr = find_func_addr(local_map, map, "libdl.so", "dlsym");
         if (dlsym_addr == nullptr) return false;
         args.clear();
-        str = push_string(pid, regs, "entry");
+        sdstring entry_str("entry");
+        str = push_string(pid, regs, entry_str.c_str());
         args.push_back(remote_handle);
         args.push_back((long) str);
         auto injector_entry = remote_call(pid, regs, (uintptr_t) dlsym_addr, (uintptr_t) libc_return_addr, args);
+        entry_str.clear_on_stack(pid, regs);
         LOGD("injector entry %p", (void*) injector_entry);
         if (injector_entry == 0) {
             LOGE("injector entry is null");
@@ -151,9 +155,11 @@ bool inject_on_main(int pid, const char *lib_path) {
         // call injector entry(handle, path)
         args.clear();
         args.push_back(remote_handle);
-        str = push_string(pid, regs, zygiskd::GetTmpPath().c_str());
+        sdstring tmp_path = zygiskd::GetTmpPath();
+        str = push_string(pid, regs, tmp_path.c_str());
         args.push_back((long) str);
         remote_call(pid, regs, injector_entry, (uintptr_t) libc_return_addr, args);
+        tmp_path.clear_on_stack(pid, regs);
 
         // reset pc to entry
         backup.REG_IP = (long) entry_addr;
@@ -186,9 +192,9 @@ bool trace_zygote(int pid) {
     }
     WAIT_OR_DIE
     if (STOPPED_WITH(SIGSTOP, PTRACE_EVENT_STOP)) {
-        std::string lib_path = zygiskd::GetTmpPath();
+        sdstring lib_path = zygiskd::GetTmpPath();
         lib_path += "/lib" LP_SELECT("", "64") "/libzygisk.so";
-        if (!inject_on_main(pid, lib_path.c_str())) {
+        if (!inject_on_main(pid, &lib_path)) {
             LOGE("failed to inject");
             return false;
         }

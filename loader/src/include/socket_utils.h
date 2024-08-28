@@ -4,6 +4,7 @@
 #include <string_view>
 
 #include "logging.h"
+#include "string.hpp"
 
 namespace socket_utils {
 
@@ -17,7 +18,7 @@ namespace socket_utils {
 
     size_t read_usize(int fd);
 
-    std::string read_string(int fd);
+    sdstring read_string(int fd);
 
     bool write_u8(int fd, uint8_t val);
 
