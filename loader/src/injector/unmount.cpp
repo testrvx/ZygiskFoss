@@ -1,6 +1,5 @@
 #include <mntent.h>
 #include <sys/mount.h>
-#include <mimalloc-override.h>
 
 #include "files.hpp"
 #include "logging.h"
@@ -8,6 +7,8 @@
 #include "zygisk.hpp"
 
 #include "string.hpp"
+
+#include <mimalloc-override.h>
 
 using namespace std::string_view_literals;
 

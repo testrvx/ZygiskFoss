@@ -1,9 +1,10 @@
 #include <android/log.h>
-#include <mimalloc-override.h>
 #include <unistd.h>
 
 #include "logging.h"
 #include "socket_utils.h"
+
+#include <mimalloc-override.h>
 
 namespace logging {
     static int logfd = -1;

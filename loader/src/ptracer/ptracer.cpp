@@ -13,12 +13,13 @@
 #include <dlfcn.h>
 #include <signal.h>
 #include <sys/system_properties.h>
-#include <mimalloc-override.h>
 #include <string>
 #include <cinttypes>
 
 #include "utils.hpp"
 #include "string.hpp"
+
+#include <mimalloc-override.h>
 
 bool inject_on_main(int pid, sdstring *lib_path) {
     LOGI("injecting %s to zygote %d", lib_path->c_str(), pid);

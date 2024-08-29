@@ -1,7 +1,6 @@
 #include <vector>
 #include <sys/mman.h>
 #include <sys/sysmacros.h>
-#include <mimalloc-override.h>
 #include <array>
 #include <cinttypes>
 #include <sys/ptrace.h>
@@ -29,6 +28,8 @@
 #include <fcntl.h>
 
 #include "string.hpp"
+
+#include <mimalloc-override.h>
 
 bool switch_mnt_ns(int pid, int *fd) {
     int nsfd, old_nsfd = -1;

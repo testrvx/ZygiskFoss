@@ -1,12 +1,13 @@
 #include <linux/un.h>
 #include <sys/socket.h>
-#include <mimalloc-override.h>
 #include <unistd.h>
 
 #include "daemon.h"
 #include "dl.h"
 #include "socket_utils.h"
 #include "string.hpp"
+
+#include <mimalloc-override.h>
 
 namespace zygiskd {
     static sdstring TMP_PATH;

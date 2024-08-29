@@ -4,10 +4,11 @@
 #include <climits>
 #include <cstring>
 #include <android/dlext.h>
-#include <mimalloc-override.h>
 
 #include "dl.h"
 #include "logging.h"
+
+#include <mimalloc-override.h>
 
 extern "C" [[gnu::weak]] struct android_namespace_t*
 //NOLINTNEXTLINE

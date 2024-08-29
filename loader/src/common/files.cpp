@@ -1,9 +1,10 @@
 #include <sys/sysmacros.h>
-#include <mimalloc-override.h>
 
 #include "files.hpp"
 #include "misc.hpp"
 #include "string.hpp"
+
+#include <mimalloc-override.h>
 
 using namespace std::string_view_literals;
 

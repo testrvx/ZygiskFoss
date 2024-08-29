@@ -1,7 +1,7 @@
-#include <mimalloc-override.h>
-
 #include "misc.hpp"
 #include "string.hpp"
+
+#include <mimalloc-override.h>
 
 int new_daemon_thread(thread_entry entry, void *arg) {
     pthread_t thread;

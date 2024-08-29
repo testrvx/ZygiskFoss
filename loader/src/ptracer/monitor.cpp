@@ -1,5 +1,4 @@
 #include <sys/system_properties.h>
-#include <mimalloc-override.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <map>
@@ -22,6 +21,8 @@
 #include "files.hpp"
 #include "misc.hpp"
 #include "string.hpp"
+
+#include <mimalloc-override.h>
 
 using namespace std::string_view_literals;
 

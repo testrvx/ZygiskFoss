@@ -5,7 +5,6 @@
 #include <fcntl.h>
 #include <time.h>
 #include <sys/system_properties.h>
-#include <mimalloc-override.h>
 
 #include "main.hpp"
 #include "utils.hpp"
@@ -13,6 +12,8 @@
 #include <sys/mount.h>
 
 #include "string.hpp"
+
+#include <mimalloc-override.h>
 
 using namespace std::string_view_literals;
 
