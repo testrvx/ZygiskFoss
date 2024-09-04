@@ -29,7 +29,7 @@ create_sys_perm() {
 }
 
 export TMP_PATH=/sbin
-[ -d /sbin ] || export TMP_PATH=/debug_ramdisk
+[ -d /sbin ] || export TMP_PATH=/data/adb/zygisksu
 
 create_sys_perm $TMP_PATH
 
